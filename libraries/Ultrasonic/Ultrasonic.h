@@ -1,7 +1,6 @@
 #ifndef _ULTRASONIC_H
 #define _ULTRASONIC_H
 #include <NewPing.h>
-#include <arduino.h>
 class Ultrasonic{
 public:
 	Ultrasonic();
