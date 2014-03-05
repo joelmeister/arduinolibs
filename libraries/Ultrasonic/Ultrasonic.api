@@ -1,0 +1,9 @@
+# API for Ultrasonic RangeFinder Class
+pin 7: trigger
+pin 8: echo
+maxdelay: 200
+
+unsigned int getDistance()
+	Gets the distance of the nearest object
+	detected by the sr04 ultrasonic rangefinder
+	in inches

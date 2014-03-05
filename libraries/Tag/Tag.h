@@ -2,7 +2,7 @@
 #define _TAG_H
 class Tag{
 public:
-	Tag()
+	Tag();
 	Tag(bool);
 	virtual ~Tag();
 	bool isIt();
