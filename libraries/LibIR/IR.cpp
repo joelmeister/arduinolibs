@@ -57,6 +57,16 @@ int IR::parseResult(){
 			break;
 		default:break;
 	}
+
+	return -1;
 }
-void IR::setMode(int m){this->mode = m;}
+void IR::setMode(int m){
+	this->mode = m;
+	if(this->mode == RECEIVER){
+		this.irRecv.enableIRIn(38);//kHz
+	}
+	else if(this->mode == SENDER){
+		this.irSend.enableIROut(38);
+	}
+}
 int IR::getMode(){return this->mode;}
