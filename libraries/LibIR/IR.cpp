@@ -26,7 +26,11 @@ void IR::setup(int m){
 	sends a custom message, up to 8 bits in length (<256)
 */
 void IR::sendCustomMessage(int data, int len){
-	
+	if(this->mode == RECEIVER) {
+		Serial.println("You are receiver...don't send");
+		return;
+	}
+	this->irSend.sendNEC(data,len);
 }
 /*
 	sends a message from a list of preset messages
