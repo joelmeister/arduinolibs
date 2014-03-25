@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <IRremote.h>
+#include <IRremoteInt.h>
 
 class IR{
 public:
