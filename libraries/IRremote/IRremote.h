@@ -50,6 +50,7 @@ public:
   void resume();
 private:
   // These are called by decode
+  int pin;
   int getRClevel(decode_results *results, int *offset, int *used, int t1);
   long decodeNEC(decode_results *results);
   long decodeSony(decode_results *results);

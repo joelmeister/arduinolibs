@@ -37,7 +37,7 @@
 // Teensy 2.0
 #elif defined(__AVR_ATmega32U4__)
   //#define IR_USE_TIMER1   // tx = pin 14
-  #define IR_USE_TIMER3   // tx = pin 9
+  #define IR_USE_TIMER3   // tx = pin 5
   //#define IR_USE_TIMER4_HS  // tx = pin 10
 
 // Teensy++ 1.0 & 2.0
@@ -251,7 +251,7 @@ extern volatile irparams_t irparams;
 #elif defined(__AVR_ATmega1280__)
 #define TIMER_PWM_PIN        5  /* Arduino Mega */
 #elif defined(__AVR_ATmega32U4__)
-#define TIMER_PWM_PIN        9  /* Arduino Mega PROMICRO TOO*/
+#define TIMER_PWM_PIN        5  /* Arduino Mega PROMICRO TOO*/
 #else
 #error "Please add OC3A pin number here\n"
 #endif
