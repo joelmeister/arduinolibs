@@ -4,8 +4,6 @@
  * Copyright 2009 Ken Shirriff
  * For details, see http://arcfn.com/2009/08/multi-protocol-infrared-remote-library.html
  *
- * Modified by Paul Stoffregen <paul@pjrc.com> to support other boards and timers
- *
  * Interrupt code based on NECIRrcv by Joe Knapp
  * http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1210243556
  * Also influenced by http://zovirl.com/2008/11/12/building-a-universal-remote-with-an-arduino/
@@ -17,7 +15,12 @@
 // Provides ISR
 #include <avr/interrupt.h>
 
-volatile irparams_t irparams;
+// Neco: moved irparams into private instance members
+//volatile irparams_t irparams;
+// Neco: adding global variable - list of irparams_t to go thru in interruption cycle
+#include "CppList.h"
+
+CppList lst_of_irparams;
 
 // These versions of MATCH, MATCH_MARK, and MATCH_SPACE are only for debugging.
 // To use them, set DEBUG in IRremoteInt.h
@@ -62,6 +65,7 @@ int MATCH_SPACE(int measured_ticks, int desired_us) {
 }
 #endif
 
+
 void IRsend::sendRaw(unsigned int buf[], int len, int hz)
 {
   enableIROut(hz);
@@ -90,10 +94,9 @@ void IRsend::space(int time) {
   TIMER_DISABLE_PWM; // Disable pin 3 PWM output
   delayMicroseconds(time);
 }
-
 void IRsend::enableIROut(int khz) {
   // Enables IR output.  The khz value controls the modulation frequency in kilohertz.
-  // The IR output will be on pin 3 (OC2B).
+  // The IR output will be on TIMER_PWM_PIN (defined in IRremoteInt.h)
   // This routine is designed for 36-40KHz; if you use it for other values, it's up to you
   // to make sure it gives reasonable results.  (Watch out for overflow / underflow / rounding.)
   // TIMER2 is used in phase-correct PWM mode, with OCR2A controlling the frequency and OCR2B
@@ -102,7 +105,6 @@ void IRsend::enableIROut(int khz) {
   // To turn the output on and off, we leave the PWM running, but connect and disconnect the output pin.
   // A few hours staring at the ATmega documentation and this will all make sense.
   // See my Secrets of Arduino PWM at http://arcfn.com/2009/07/secrets-of-arduino-pwm.html for details.
-
   
   // Disable the Timer2 Interrupt (which is used for receiving IR)
   TIMER_DISABLE_INTR; //Timer2 Overflow Interrupt
@@ -110,18 +112,20 @@ void IRsend::enableIROut(int khz) {
   pinMode(TIMER_PWM_PIN, OUTPUT);
   digitalWrite(TIMER_PWM_PIN, LOW); // When not sending PWM, we want it low
   
-  // COM2A = 00: disconnect OC2A
-  // COM2B = 00: disconnect OC2B; to send signal set to 10: OC2B non-inverted
-  // WGM2 = 101: phase-correct PWM with OCRA as top
-  // CS2 = 000: no prescaling
-  // The top value for the timer.  The modulation frequency will be SYSCLOCK / 2 / OCR2A.
   TIMER_CONFIG_KHZ(khz);
 }
 
-IRrecv::IRrecv(int recvpin)
+IRrecv::IRrecv(int recvpin):
+	irparams()
 {
-	pin=recvpin;
   irparams.recvpin = recvpin;
+  irparams.blinkflag = 0;
+  lst_of_irparams.Add(&irparams); // Neco: add our instance to global list
+}
+// Neco: add destructor to remove instance of irparams from global list
+IRrecv::~IRrecv()
+{
+	lst_of_irparams.Delete(&irparams);
 }
 
 // initialization
@@ -145,9 +149,9 @@ void IRrecv::enableIRIn() {
   irparams.rawlen = 0;
 
   // set pin modes
-  pinMode(irparams.recvpin, INPUT);
-	  
+  pinMode(irparams.recvpin, INPUT);	  
 }
+
 
 // enable/disable blinking of pin 13 on IR processing
 void IRrecv::blink13(int blinkflag)
@@ -164,93 +168,103 @@ void IRrecv::blink13(int blinkflag)
 // First entry is the SPACE between transmissions.
 // As soon as a SPACE gets long, ready is set, state switches to IDLE, timing of SPACE continues.
 // As soon as first MARK arrives, gap width is recorded, ready is cleared, and new logging starts
+
+// Neco: extract original body of interruption to leave code without changes
+void ProcessOneIRParam(irparams_t &irparams){
+	uint8_t irdata = (uint8_t)digitalRead(irparams.recvpin);
+
+	irparams.timer++; // One more 50us tick
+	if (irparams.rawlen >= RAWBUF) {
+	// Buffer overflow
+	irparams.rcvstate = STATE_STOP;
+	}
+	switch(irparams.rcvstate) {
+	case STATE_IDLE: // In the middle of a gap
+	if (irdata == MARK) {
+		if (irparams.timer < GAP_TICKS) {
+		// Not big enough to be a gap.
+		irparams.timer = 0;
+		} 
+		else {
+		// gap just ended, record duration and start recording transmission
+		irparams.rawlen = 0;
+		irparams.rawbuf[irparams.rawlen++] = irparams.timer;
+		irparams.timer = 0;
+		irparams.rcvstate = STATE_MARK;
+		}
+	}
+	break;
+	case STATE_MARK: // timing MARK
+	if (irdata == SPACE) {   // MARK ended, record time
+		irparams.rawbuf[irparams.rawlen++] = irparams.timer;
+		irparams.timer = 0;
+		irparams.rcvstate = STATE_SPACE;
+	}
+	break;
+	case STATE_SPACE: // timing SPACE
+	if (irdata == MARK) { // SPACE just ended, record it
+		irparams.rawbuf[irparams.rawlen++] = irparams.timer;
+		irparams.timer = 0;
+		irparams.rcvstate = STATE_MARK;
+	} 
+	else { // SPACE
+		if (irparams.timer > GAP_TICKS) {
+		// big SPACE, indicates gap between codes
+		// Mark current code as ready for processing
+		// Switch to STOP
+		// Don't reset timer; keep counting space width
+		irparams.rcvstate = STATE_STOP;
+		} 
+	}
+	break;
+	case STATE_STOP: // waiting, measuring gap
+	if (irdata == MARK) { // reset gap timer
+		irparams.timer = 0;
+	}
+	break;
+	}
+
+	if (irparams.blinkflag) {
+		if (irdata == MARK) {
+			BLINKLED_ON();  // turn pin 13 LED on
+		} 
+    else {
+			BLINKLED_OFF();  // turn pin 13 LED off
+		}
+	}
+}
+//#define DEBUG1
 ISR(TIMER_INTR_NAME)
 {
   TIMER_RESET;
-  uint8_t irdata = (uint8_t)digitalRead(irparams.recvpin);
 
-  irparams.timer++; // One more 50us tick
-  if (irparams.rawlen >= RAWBUF) {
-    // Buffer overflow
-    irparams.rcvstate = STATE_STOP;
+  //*
+  int count_of_irparams = lst_of_irparams.GetCount();
+  for (int i=0;i<count_of_irparams;++i){
+	  irparams_t *irparams = (irparams_t*)lst_of_irparams.GetItem(i);
+	  ProcessOneIRParam(*irparams);
+#ifdef DEBUG1
+		Serial.print("irparams pin: ");
+		Serial.println(irparams->recvpin);
+#endif
   }
-  switch(irparams.rcvstate) {
-  case STATE_IDLE: // In the middle of a gap
-    if (irdata == MARK) {
-      if (irparams.timer < GAP_TICKS) {
-        // Not big enough to be a gap.
-        irparams.timer = 0;
-      } 
-      else {
-        // gap just ended, record duration and start recording transmission
-        irparams.rawlen = 0;
-        irparams.rawbuf[irparams.rawlen++] = irparams.timer;
-        irparams.timer = 0;
-        irparams.rcvstate = STATE_MARK;
-      }
-    }
-    break;
-  case STATE_MARK: // timing MARK
-    if (irdata == SPACE) {   // MARK ended, record time
-      irparams.rawbuf[irparams.rawlen++] = irparams.timer;
-      irparams.timer = 0;
-      irparams.rcvstate = STATE_SPACE;
-    }
-    break;
-  case STATE_SPACE: // timing SPACE
-    if (irdata == MARK) { // SPACE just ended, record it
-      irparams.rawbuf[irparams.rawlen++] = irparams.timer;
-      irparams.timer = 0;
-      irparams.rcvstate = STATE_MARK;
-    } 
-    else { // SPACE
-      if (irparams.timer > GAP_TICKS) {
-        // big SPACE, indicates gap between codes
-        // Mark current code as ready for processing
-        // Switch to STOP
-        // Don't reset timer; keep counting space width
-        irparams.rcvstate = STATE_STOP;
-      } 
-    }
-    break;
-  case STATE_STOP: // waiting, measuring gap
-    if (irdata == MARK) { // reset gap timer
-      irparams.timer = 0;
-    }
-    break;
-  }  
-  if (irparams.blinkflag) {
-    if (irdata == MARK) {
-      BLINKLED_ON();  // turn pin 13 LED on
-    } 
-    else {
-      BLINKLED_OFF();  // turn pin 13 LED off
-    }
-  }
+  //*/
 }
 
 void IRrecv::resume() {
-	irparams.rcvstate = STATE_IDLE;
-	irparams.rawlen = 0;
+  irparams.rcvstate = STATE_IDLE;
+  irparams.rawlen = 0;
 }
 
 // Decodes the received IR message
 // Returns 0 if no data ready, 1 if data ready.
 // Results of decoding are stored in results
 int IRrecv::decode(decode_results *results) {
-
-#ifdef DEBUG
-  Serial.print("looking at pin: ");
-  Serial.println(this->pin);
-#endif
-
   results->rawbuf = irparams.rawbuf;
   results->rawlen = irparams.rawlen;
-  
   if (irparams.rcvstate != STATE_STOP) {
-	return ERR;
+    return ERR;
   }
-		  
 
   if (results->rawlen >= 6) {
     // Only return raw buffer if at least 6 bits

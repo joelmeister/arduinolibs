@@ -10,10 +10,10 @@
 
 IRsend irsend;
 int LED = A0;
-int b1 = 4;
-int b2 = 4;
+int b1 = 2;
+int b2 = 3;
 int b3 = 4;
-int b4 = 4;
+int b4 = 6;
 
 void setup()
 {
@@ -34,26 +34,24 @@ void loop() {
   int s2 = digitalRead(b2);
   int s3 = digitalRead(b3);
   int s4 = digitalRead(b4);
+  digitalWrite(LED,HIGH);
   delay(100);
   if(s1 == HIGH){
     irsend.sendRaw(buf1,9,38);
-    delay(100);
   }
-  else if(s1 == HIGH){
+  else if(s2 == HIGH){
     irsend.sendRaw(buf2,9,38);
-    delay(100);
   }
-  else if(s1 == HIGH){
+  else if(s3 == HIGH){
     irsend.sendRaw(buf3,9,38);
-    delay(100);
   }
-  else if(s1 == HIGH){
+  else if(s4 == HIGH){
     irsend.sendRaw(buf4,9,38);
-    delay(100);
   }
   else{
-    //irsend.sendRaw(buf5,9,38);
-    delay(100);
+    irsend.sendRaw(buf5,9,38);
   }
+  digitalWrite(LED,LOW);
+  delay(100);
 }
 
