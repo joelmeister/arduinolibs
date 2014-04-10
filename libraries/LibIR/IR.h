@@ -16,9 +16,9 @@ public:
 	decode_results results;
 	void setup();
 	void sendMessage(int msg);
-	int getMessage();
-	int getResult(IRrecv &irrecv);
-	int parseResult(int res,int dir);
+	int getMessage();//returns final message as int
+	int getResult(IRrecv &irrecv);//get msg on each receiver
+	int parseResult(int res,int dir);//checks the checksum
 	void setMode(int mode);
 	int getMode();
 	void enableAll();
