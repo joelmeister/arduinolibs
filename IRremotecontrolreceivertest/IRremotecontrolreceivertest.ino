@@ -1,15 +1,14 @@
 /*
- * IRremote: IRrecvDemo - demonstrates receiving IR codes with IRrecv
- * An IR detector/demodulator must be connected to the input RECV_PIN.
- * Version 0.1 July, 2009
- * Copyright 2009 Ken Shirriff
- * http://arcfn.com
- */
-
+ * arduino to resistor to +led to ground
+*/
 #include <IRremote.h>
 #include <Motor.h>
 
-int LED = A0;
+int LED = 3;
+int LED1 = A0;
+int LED2 = A;
+int LED3 = A1;
+int LED4 = A0;
 int RECV_PIN = 10;
 IRrecv irrecv(RECV_PIN);
 decode_results results;
@@ -20,7 +19,11 @@ void setup()
 {
   Serial.begin(9600);
   irrecv.enableIRIn(); // Start the receiver
-  pinMode(LED,OUTPUT);
+  pinMode(LED, OUTPUT);
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT);
+  pinMode(LED4, OUTPUT);
 }
 
 void loop() {
@@ -35,21 +38,25 @@ void loop() {
 }
 void fwd(){
   motor.forward();
+  LEDOn(LED1);
 }
 void back(){
   motor.backward();
+  LEDOn(LED2);
 }
 void left(){
   motor.turnLeft();
+  LEDOn(LED3);
 }
 void right(){
   motor.turnRight();
+  LEDOn(LED4);
 }
 void idle(){
   motor.stop();
+  LEDOn(-1);
 }
 void parseResult(int res){
-  res/=2;
    if(res > 79 && res <= 88){
      fwd();
    }
@@ -65,6 +72,15 @@ void parseResult(int res){
   else{
     idle();
   }
+}
+void LEDOn(int pin){
+       digitalWrite(LED1, LOW);
+       digitalWrite(LED2, LOW);
+       digitalWrite(LED3, LOW);
+       digitalWrite(LED4, LOW);
+       if(pin != -1){
+          digitalWrite(pin, HIGH); //overwrite previous 
+       }
 }
 int getResult(){
     delay(50);
