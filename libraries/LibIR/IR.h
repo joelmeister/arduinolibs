@@ -33,6 +33,7 @@ public:
 	static const unsigned int msg6[8];
 	static const unsigned int msg7[8];
 	static const unsigned int msg8[8];
+	static const unsigned int msgs[9][8];
 private:
 	int send_pin;
 	int recv_pin0;

@@ -6,7 +6,7 @@
 
 int LED = 3;
 int LED1 = A0;
-int LED2 = A;
+int LED2 = A2;
 int LED3 = A1;
 int LED4 = A0;
 int RECV_PIN = 10;

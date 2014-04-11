@@ -7,6 +7,7 @@
 #define SENDER 1
 #define ERROR 2
 
+#define DEBUG
 const unsigned int IR::msg0[8] 
     = {500,500,500,500,500,500,500,500};                                                
 const unsigned int IR::msg1[8]
@@ -25,7 +26,8 @@ const unsigned int IR::msg7[8]
     = {500,1000,1000,1000,1000,1000,1000,1000}; 
 const unsigned int IR::msg8[8]
     = {1000,1000,1000,1000,1000,1000,1000,1000}; 
-
+//const unsigned int IR::msgs[8][9] = {IR::msg0,IR::msg1,IR::msg2,IR::msg3,IR::msg4,
+//									IR::msg5,IR::msg6,IR::msg7,IR::msg8};
 IR::IR()
 	: irSend(),irRecv0(10),irRecv1(16),
 		irRecv2(14),irRecv3(15),
@@ -53,33 +55,70 @@ void IR::setup(){ }
 	sends a message from a list of preset messages
 */
 void IR::sendMessage(int msg){
-	if(this->mode == RECEIVER) {
-		Serial.println("You are receiver...don't send");
-		return;
+#ifdef DEBUG
+	Serial.print("sending: ");
+	Serial.println(msg);
+#endif
+	if(msg == 0){
+		this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
+		Serial.println("sent 0"); 
 	}
+	else if(msg == 1){
+		this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
+		Serial.println("sent 1"); 
+	}
+	else if(msg == 2){
+		this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
+		Serial.println("sent 2"); 
+	}
+	else if(msg == 3){
+		this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
+		Serial.println("sent 3"); 
+	}
+	else if(msg == 4){
+		this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
+		Serial.println("sent 4"); 
+	}else{
+		this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
+		Serial.println("sent else"); 
+	}
+/*
 	switch (msg){
 		case 0:
-			this->irSend.sendRaw((unsigned int*)IR::msg0,8,38);
+			this->irSend.sendRaw((unsigned int*)IR::msg0,9,38);
 			break;
 		case 1:
-			this->irSend.sendRaw((unsigned int*)IR::msg1,8,38);
+			this->irSend.sendRaw((unsigned int*)IR::msg1,9,38);
 			break;
 		case 2:
-			this->irSend.sendRaw((unsigned int*)IR::msg2,8,38);
+			this->irSend.sendRaw((unsigned int*)IR::msg2,9,38);
 			break;
 		case 3:
-			this->irSend.sendRaw((unsigned int*)IR::msg3,8,38);
+			this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
 			break;
 		case 4:
-			this->irSend.sendRaw((unsigned int*)IR::msg4,8,38);
+			this->irSend.sendRaw((unsigned int*)IR::msg4,9,38);
 			break;
+			/*
 		case 5:
-			this->irSend.sendRaw((unsigned int*)IR::msg5,8,38);
+			this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
 			break;
-		default:
-			this->irSend.sendRaw((unsigned int*)IR::msg8,8,38);
+		case 8:
+			this->irSend.sendRaw((unsigned int*)IR::msg6,9,38);
+			break;
+		case 7:
+			this->irSend.sendRaw((unsigned int*)IR::msg7,9,38);
+			break;
+			*/
+		//case 8:
+		//	this->irSend.sendRaw((unsigned int*)IR::msg8,9,38);
+		//	break;
+	/*	default:
+			this->irSend.sendRaw(0,8,38);
 			break;
 	}
+	*/
+	
 	this->resumeAll();
 	delay(100);
 }
@@ -127,6 +166,9 @@ int IR::getMessage(){
 	    int res = getResult(irRecv3);
 	    return parseResult(res, BACK);
 	}
+#ifdef DEBUG
+	//Serial.println("Didn't receive a message");
+#endif
 	return -1;
 }
 int IR::getResult(IRrecv &irrecv){
