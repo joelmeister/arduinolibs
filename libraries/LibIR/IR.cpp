@@ -60,26 +60,38 @@ void IR::sendMessage(int msg){
 	Serial.println(msg);
 #endif
 	if(msg == 0){
-		this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
+		unsigned int msg[8] = {500,500,500,500,500,500,500,500};
+		this->irSend.sendRaw(msg,9,38);
+		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
 		Serial.println("sent 0"); 
 	}
 	else if(msg == 1){
-		this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
+		unsigned int msg[8] = {500,500,500,500,500,500,500,1000};
+		this->irSend.sendRaw(msg,9,38);
+		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
 		Serial.println("sent 1"); 
 	}
 	else if(msg == 2){
-		this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
+		unsigned int msg[8] = {500,500,500,500,500,500,1000,1000};
+		this->irSend.sendRaw(msg,9,38);
+		//this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
 		Serial.println("sent 2"); 
 	}
 	else if(msg == 3){
-		this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
+		unsigned int msg[8] = {500,500,500,500,500,1000,1000,1000};
+		this->irSend.sendRaw(msg,9,38);
+		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
 		Serial.println("sent 3"); 
 	}
 	else if(msg == 4){
-		this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
+		unsigned int msg[8] = {500,500,500,500,1000,1000,1000,1000};
+		this->irSend.sendRaw(msg,9,38);
+		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
 		Serial.println("sent 4"); 
 	}else{
-		this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
+		unsigned int msg[8] = {500,500,500,1000,1000,1000,1000,1000};
+		this->irSend.sendRaw(msg,9,38);
+		//this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
 		Serial.println("sent else"); 
 	}
 /*
