@@ -15,6 +15,8 @@
 #define MSG_RIGHT 3
 
 int LED = 17;
+int LED0= A0;
+int LED1= A1;
 IR ir;
 Motor motor(WHEEL0, WHEEL1, MOTORENA);
 
@@ -23,6 +25,8 @@ int IT=0;
 void setup(){
 	Serial.begin(9600);
 	pinMode(LED,OUTPUT);
+	pinMode(LED0,OUTPUT);//shit code
+	pinMode(LED1,OUTPUT);//shit code
 }
 void loop(){
           digitalWrite(LED,HIGH);

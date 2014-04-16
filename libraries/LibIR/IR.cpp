@@ -8,26 +8,6 @@
 #define ERROR 2
 
 #define DEBUG
-const unsigned int IR::msg0[8] 
-    = {500,500,500,500,500,500,500,500};                                                
-const unsigned int IR::msg1[8]
-    = {500,500,500,500,500,500,500,1000};                                               
-const unsigned int IR::msg2[8]
-    = {500,500,500,500,500,500,1000,1000};                                              
-const unsigned int IR::msg3[8]
-    = {500,500,500,500,500,1000,1000,1000};                                             
-const unsigned int IR::msg4[8]
-    = {500,500,500,500,1000,1000,1000,1000};                                            
-const unsigned int IR::msg5[8]
-    = {500,500,500,1000,1000,1000,1000,1000}; 
-const unsigned int IR::msg6[8]
-    = {500,500,1000,1000,1000,1000,1000,1000}; 
-const unsigned int IR::msg7[8]
-    = {500,1000,1000,1000,1000,1000,1000,1000}; 
-const unsigned int IR::msg8[8]
-    = {1000,1000,1000,1000,1000,1000,1000,1000}; 
-//const unsigned int IR::msgs[8][9] = {IR::msg0,IR::msg1,IR::msg2,IR::msg3,IR::msg4,
-//									IR::msg5,IR::msg6,IR::msg7,IR::msg8};
 IR::IR()
 	: irSend(),irRecv0(10),irRecv1(16),
 		irRecv2(14),irRecv3(15),
@@ -36,15 +16,15 @@ IR::IR()
 {
 	setup();
 /*these might change*/
-	m0_l = 72; m0_u = 86;
-	m1_l = 87; m1_u = 96;
-	m2_l = 97; m2_u = 106;
-	m3_l = 107; m3_u = 116;
-	m4_l = 117; m4_u = 126;
-	m5_l = 127; m5_u = 136;
-	m6_l = 137; m6_u = 146;
-	m7_l = 147; m7_u = 156;
-	m8_l = 157; m8_u = 166;
+	m0_l = 38; m0_u = 42;
+	m1_l = 43; m1_u = 47;
+	m2_l = 48; m2_u = 52;
+	m3_l = 53; m3_u = 57;
+	m4_l = 58; m4_u = 62;
+	m5_l = 63; m5_u = 67;
+	m6_l = 68; m6_u = 72;
+	m7_l = 73; m7_u = 77;
+	m8_l = 78; m8_u = 82;
 	enableAll();
 }
 
@@ -54,42 +34,51 @@ void IR::setup(){ }
 /*
 	sends a message from a list of preset messages
 */
+#define SMALL 5000
+#define LARGE 10000
 void IR::sendMessage(int msg){
 #ifdef DEBUG
 	Serial.print("sending: ");
 	Serial.println(msg);
 #endif
 	if(msg == 0){
-		unsigned int msg[8] = {500,500,500,500,500,500,500,500};
+		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,SMALL};
 		this->irSend.sendRaw(msg,9,38);
 		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
 		Serial.println("sent 0"); 
 	}
 	else if(msg == 1){
-		unsigned int msg[8] = {500,500,500,500,500,500,500,1000};
+		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,LARGE};
 		this->irSend.sendRaw(msg,9,38);
 		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
 		Serial.println("sent 1"); 
 	}
 	else if(msg == 2){
-		unsigned int msg[8] = {500,500,500,500,500,500,1000,1000};
+		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
 		//this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
 		Serial.println("sent 2"); 
 	}
 	else if(msg == 3){
-		unsigned int msg[8] = {500,500,500,500,500,1000,1000,1000};
+		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,SMALL,LARGE,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
 		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
 		Serial.println("sent 3"); 
 	}
 	else if(msg == 4){
-		unsigned int msg[8] = {500,500,500,500,1000,1000,1000,1000};
+		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,LARGE,LARGE,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
 		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
 		Serial.println("sent 4"); 
-	}else{
-		unsigned int msg[8] = {500,500,500,1000,1000,1000,1000,1000};
+	}
+	else if( msg == 5){
+		unsigned int msg[8] = {SMALL,SMALL,SMALL,LARGE,LARGE,LARGE,LARGE,LARGE};
+		this->irSend.sendRaw(msg,9,38);
+		//this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
+		Serial.println("sent 5"); 
+	}
+	else{
+		unsigned int msg[8] = {LARGE,LARGE,LARGE,LARGE,LARGE,LARGE,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
 		//this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
 		Serial.println("sent else"); 
@@ -132,7 +121,7 @@ void IR::sendMessage(int msg){
 	*/
 	
 	this->resumeAll();
-	delay(100);
+	delay(250);
 }
 
 /*
@@ -161,22 +150,30 @@ int IR::getMessage(){
 	if (irRecv0.decode(&results)) {
 		fr = true;
 		int res = getResult(irRecv0);
+		digitalWrite(A0, 0);//shitty
+		digitalWrite(A1, 0);//shitty
 		return parseResult(res, FRONT);
 	}
 	else if (irRecv1.decode(&results)) {
 		le = true;
 		int res = getResult(irRecv1);
-		return parseResult(res, LEFT);
+		digitalWrite(A0, 0);//shitty
+		digitalWrite(A1, 1);//shitty
+		return parseResult(res, BACK);
 	}
 	else if (irRecv2.decode(&results)) {
 		ri = true;
 		int res = getResult(irRecv2);
-		return parseResult(res, RIGHT);
+		digitalWrite(A0, 1);//shitty
+		digitalWrite(A1, 0);
+		return parseResult(res, LEFT);
 	}
 	else if (irRecv3.decode(&results)) {
 		ba = true;
 	    int res = getResult(irRecv3);
-	    return parseResult(res, BACK);
+		digitalWrite(A0, 1);//shitty
+		digitalWrite(A1, 1);
+	    return parseResult(res, RIGHT);
 	}
 #ifdef DEBUG
 	//Serial.println("Didn't receive a message");
@@ -186,6 +183,12 @@ int IR::getMessage(){
 int IR::getResult(IRrecv &irrecv){
     //digitalWrite(LED,LOW);
     delay(50);
+	
+	if(results.rawlen != 10){
+		//Serial.println("shitty message");
+		return -1;
+	}
+	
     int sum=0;
     for(int i=0;i<results.rawlen;i++){
      sum+=results.rawbuf[i];
@@ -195,10 +198,13 @@ int IR::getResult(IRrecv &irrecv){
 #endif
     }
 #ifdef DEBUG
-    Serial.println(sum-results.rawbuf[0]);
+	Serial.print("\nSum: ");
+    Serial.print(sum-results.rawbuf[0]-results.rawbuf[results.rawlen-1]);
+	Serial.print(" Rawlen: ");
+    Serial.println(results.rawlen);
 #endif
     irrecv.resume(); // Receive the next value
-    return sum-results.rawbuf[0] ; //-results.rawbuf[results.rawlen-1];
+    return sum-results.rawbuf[0]-results.rawbuf[results.rawlen-1]; 
 }
 int IR::parseResult(int res, int dir){
 	if(m0_l < res && res <= m0_u){
