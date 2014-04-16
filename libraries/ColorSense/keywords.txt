@@ -1,0 +1,23 @@
+###################################
+# Syntax Coloring Map For NewPing
+###################################
+
+###################################
+# Datatypes (KEYWORD1)
+###################################
+
+ColorSense	KEYWORD1
+
+###################################
+# Methods and Functions (KEYWORD2)
+###################################
+
+GetColor	KEYWORD2
+NoFilter	KEYWORD2
+RedFilter	KEYWORD2
+GreenFilter	KEYWORD2
+BlueFilter	KEYWORD2
+
+###################################
+# Constants (LITERAL1)
+###################################

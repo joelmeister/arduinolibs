@@ -1,8 +1,8 @@
 #include <IR.h>
 #define FRONT 0
-#define LEFT 1
-#define RIGHT 2
-#define BACK 3
+#define BACK 1
+#define LEFT 2
+#define RIGHT 3
 #define RECEIVER 0
 #define SENDER 1
 #define ERROR 2
@@ -83,42 +83,6 @@ void IR::sendMessage(int msg){
 		//this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
 		Serial.println("sent else"); 
 	}
-/*
-	switch (msg){
-		case 0:
-			this->irSend.sendRaw((unsigned int*)IR::msg0,9,38);
-			break;
-		case 1:
-			this->irSend.sendRaw((unsigned int*)IR::msg1,9,38);
-			break;
-		case 2:
-			this->irSend.sendRaw((unsigned int*)IR::msg2,9,38);
-			break;
-		case 3:
-			this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
-			break;
-		case 4:
-			this->irSend.sendRaw((unsigned int*)IR::msg4,9,38);
-			break;
-			/*
-		case 5:
-			this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
-			break;
-		case 8:
-			this->irSend.sendRaw((unsigned int*)IR::msg6,9,38);
-			break;
-		case 7:
-			this->irSend.sendRaw((unsigned int*)IR::msg7,9,38);
-			break;
-			*/
-		//case 8:
-		//	this->irSend.sendRaw((unsigned int*)IR::msg8,9,38);
-		//	break;
-	/*	default:
-			this->irSend.sendRaw(0,8,38);
-			break;
-	}
-	*/
 	
 	this->resumeAll();
 	delay(250);
@@ -154,26 +118,30 @@ int IR::getMessage(){
 		digitalWrite(A1, 0);//shitty
 		return parseResult(res, FRONT);
 	}
-	else if (irRecv1.decode(&results)) {
-		le = true;
-		int res = getResult(irRecv1);
-		digitalWrite(A0, 0);//shitty
-		digitalWrite(A1, 1);//shitty
-		return parseResult(res, BACK);
-	}
+	
 	else if (irRecv2.decode(&results)) {
-		ri = true;
+		le = true;
 		int res = getResult(irRecv2);
 		digitalWrite(A0, 1);//shitty
 		digitalWrite(A1, 0);
 		return parseResult(res, LEFT);
 	}
 	else if (irRecv3.decode(&results)) {
-		ba = true;
+		ri = true;
 	    int res = getResult(irRecv3);
 		digitalWrite(A0, 1);//shitty
 		digitalWrite(A1, 1);
 	    return parseResult(res, RIGHT);
+	}
+	else if (irRecv1.decode(&results)) {
+		ba = true;
+		int res = getResult(irRecv1);
+		digitalWrite(A0, 0);//shitty
+		digitalWrite(A1, 1);//shitty
+		return parseResult(res, BACK);
+	}
+	else{
+		return -1;
 	}
 #ifdef DEBUG
 	//Serial.println("Didn't receive a message");
@@ -182,10 +150,12 @@ int IR::getMessage(){
 }
 int IR::getResult(IRrecv &irrecv){
     //digitalWrite(LED,LOW);
-    delay(50);
+    //delay(50);
 	
-	if(results.rawlen != 10){
-		//Serial.println("shitty message");
+	if(results.rawlen < 8 || results.rawlen > 12){
+		//Serial.println("bad message size: ");
+		//Serial.println(results.rawlen);
+		resumeAll();
 		return -1;
 	}
 	
@@ -198,15 +168,17 @@ int IR::getResult(IRrecv &irrecv){
 #endif
     }
 #ifdef DEBUG
-	Serial.print("\nSum: ");
+	Serial.print(" | Sum: ");
     Serial.print(sum-results.rawbuf[0]-results.rawbuf[results.rawlen-1]);
 	Serial.print(" Rawlen: ");
     Serial.println(results.rawlen);
 #endif
-    irrecv.resume(); // Receive the next value
+    resumeAll(); // Receive the next value
     return sum-results.rawbuf[0]-results.rawbuf[results.rawlen-1]; 
 }
 int IR::parseResult(int res, int dir){
+	Serial.println(dir);
+	//Serial.println(" [f,b,l,r]");
 	if(m0_l < res && res <= m0_u){
 		return 0;
 	}

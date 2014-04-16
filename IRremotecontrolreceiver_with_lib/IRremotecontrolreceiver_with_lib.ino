@@ -28,21 +28,31 @@ void setup(){
 	pinMode(LED0,OUTPUT);//shit code
 	pinMode(LED1,OUTPUT);//shit code
 }
+#define BIG 100
+#define LITTLE 10
 void loop(){
           digitalWrite(LED,HIGH);
 	int res = ir.getMessage(); 
         if(res != -1){
           digitalWrite(LED,LOW);
-          delay(50);
+          //ir.resumeAll();
+         // delay(50);
         }
-	if(res == MSG_FWD){
+	if(ir.front()){
 		motor.forward();
+            delay(BIG);
 	}else if(res == MSG_BACK){
 		motor.backward();
+              delay(BIG);
 	}else if(res == MSG_LEFT){
 		motor.turnLeft();
+            delay(BIG);
 	}else if(res == MSG_RIGHT){
 		motor.turnRight();
-	}
-	delay(50);
+            delay(BIG);
+	}else{
+                motor.stop();
+        }
+        
+	delay(LITTLE);
 }
