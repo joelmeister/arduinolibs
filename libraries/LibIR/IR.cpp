@@ -44,47 +44,41 @@ void IR::sendMessage(int msg){
 	if(msg == 0){
 		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,SMALL};
 		this->irSend.sendRaw(msg,9,38);
-		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
-		Serial.println("sent 0"); 
 	}
 	else if(msg == 1){
 		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,LARGE};
 		this->irSend.sendRaw(msg,9,38);
-		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
-		Serial.println("sent 1"); 
 	}
 	else if(msg == 2){
 		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
-		//this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
-		Serial.println("sent 2"); 
 	}
 	else if(msg == 3){
 		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,SMALL,LARGE,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
-		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
-		Serial.println("sent 3"); 
 	}
 	else if(msg == 4){
 		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,LARGE,LARGE,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
-		//this->irSend.sendRaw((unsigned int*)IR::msg3,9,38);
-		Serial.println("sent 4"); 
 	}
 	else if( msg == 5){
 		unsigned int msg[8] = {SMALL,SMALL,SMALL,LARGE,LARGE,LARGE,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
-		//this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
-		Serial.println("sent 5"); 
+	}
+	else if( msg == 6){
+		unsigned int msg[8] = {SMALL,SMALL,LARGE,LARGE,LARGE,LARGE,LARGE,LARGE};
+		this->irSend.sendRaw(msg,9,38);
+	}
+	else if( msg == 7){
+		unsigned int msg[8] = {SMALL,LARGE,LARGE,LARGE,LARGE,LARGE,LARGE,LARGE};
+		this->irSend.sendRaw(msg,9,38);
 	}
 	else{
 		unsigned int msg[8] = {LARGE,LARGE,LARGE,LARGE,LARGE,LARGE,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
-		//this->irSend.sendRaw((unsigned int*)IR::msg5,9,38);
-		Serial.println("sent else"); 
 	}
 	
-	this->resumeAll();
+	this->enableAll();
 	delay(150);
 }
 
@@ -143,22 +137,10 @@ int IR::getMessage(){
 	else{
 		return -1;
 	}
-#ifdef DEBUG
-	//Serial.println("Didn't receive a message");
-#endif
 	return -1;
 }
 int IR::getResult(IRrecv &irrecv){
     delay(50);
-	
-	if(results.rawlen != 10){
-#ifdef DEBUG
-		Serial.println("bad message size: ");
-		Serial.println(results.rawlen);
-#endif
-		resumeAll();
-		return -1;
-	}
 	
     int sum=0;
     for(int i=0;i<results.rawlen;i++){
@@ -175,11 +157,20 @@ int IR::getResult(IRrecv &irrecv){
     Serial.println(results.rawlen);
 #endif
     resumeAll(); // Receive the next value
+	if(results.rawlen != 10){
+#ifdef DEBUG
+		Serial.println("bad message size: ");
+		Serial.println(results.rawlen);
+#endif
+		return -1;
+	}
     return sum-results.rawbuf[0]-results.rawbuf[results.rawlen-1]; 
 }
 int IR::parseResult(int res, int dir){
+#ifdef DEBUG
+	Serial.print("Direction: ");
 	Serial.println(dir);
-	//Serial.println(" [f,b,l,r]");
+#endif
 	if(m0_l < res && res <= m0_u){
 		return 0;
 	}

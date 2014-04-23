@@ -44,8 +44,8 @@ void loop(){
 	int res = ir.getMessage(); 
         if(res != -1){
           digitalWrite(LED,LOW);
-        }
-	if(res == MSG_FWD ){
+        }	
+        if(res == MSG_FWD ){
             if(sonar.ping_in() > MAXDIST)
 	      motor.forward(motorSpeed);
             else
@@ -60,11 +60,32 @@ void loop(){
 	}else if(res == MSG_RIGHT){
 	    motor.turnRight(TURNSPEED);
             //delay(BIG);
+	}else if(ir.left()){
+	    motor.turnLeft(TURNSPEED);
+            //delay(BIG);
+	}else if(ir.right()){
+	    motor.turnRight(TURNSPEED);
+            //delay(BIG);
+	}else if(ir.front()){
+            if(sonar.ping_in() > MAXDIST)
+	      motor.forward(motorSpeed);
+            else
+               motor.stop();
+            //delay(BIG);
+	}else if(ir.left()){
+	    motor.turnLeft(TURNSPEED);
+            //delay(BIG);
+	}else if(ir.right()){
+	    motor.turnRight(TURNSPEED);
+            //delay(BIG);
+	}else if(ir.back()){
+	    motor.turnRight(TURNSPEED);
+            //delay(BIG);
 	} else if(res == MSG_SLOW){
             motorSpeed = SLOW;
         }else if (res == MSG_FAST){
             motorSpeed = FAST;
-        } else if (res == 8 ||  sonar.ping_in() < MAXDIST){
+        } else if (sonar.ping_in() < MAXDIST){
             motor.stop();
         }
 	delay(BIG);

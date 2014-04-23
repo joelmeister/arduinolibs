@@ -17,7 +17,12 @@
 #define MSG_TAG 1
 #define MSG_ACK 2
 
-int LED = 3;
+#define SLOW 75
+#define FAST 125
+#define MAXDIST 8
+#define TURNSPEED 40
+
+int LED = A0;
 IR ir;
 NewPing sonar(TRIG,ECHO,DIST);
 Motor motor(WHEEL0, WHEEL1, MOTORENA);
@@ -34,9 +39,13 @@ void loop(){
 
 void tag(){
 	if(IT){
+              digitalWrite(LED,HIGH);
 		lookForBot();
+    Serial.println("IT");
 	} else{
+              digitalWrite(LED,LOW);
 		runFromBot();
+    Serial.println("NOT IT");
 	}
 	delay(50);
 }
@@ -59,10 +68,10 @@ void lookForBot(){
 		} else if(ir.back()){
 			motor.turnLeft();
 		} else{
-			moveIt();
+			moveIt(FAST);
 		}
 	} else{
-		moveIt();
+		moveIt(FAST);
 	}
 }
 /*
@@ -72,24 +81,26 @@ void lookForBot(){
 void runFromBot(){
 	int msg = ir.getMessage();
 	if(msg == MSG_TAG){
+                motor.stop();
 		IT = 1;
 		//send ack three times
 		for (int i = 0 ; i < 3; i++){
 			ir.sendMessage(MSG_ACK);
-			delay(50);
 		}
 	}
 	else {
 		ir.sendMessage(MSG_NOT_IT);
-		move();
+		moveIt(SLOW);
 	}
 }
 /*
 	move but dont run into anything
 */
-void moveIt(){
+void moveIt(int sp){
 	//if wall turn left
-	motor.turnLeft();
+        if(sonar.ping_in() < 10)
+	  motor.turnLeft(TURNSPEED);
 	//else go forward
-	motor.forward();
+	else 
+          motor.forward(sp);
 }
