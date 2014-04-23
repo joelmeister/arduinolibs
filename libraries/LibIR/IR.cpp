@@ -79,7 +79,6 @@ void IR::sendMessage(int msg){
 	}
 	
 	this->enableAll();
-	delay(150);
 }
 
 /*
@@ -96,12 +95,15 @@ void IR::enableAll(){
 	irRecv1.enableIRIn();
 	irRecv2.enableIRIn();
 	irRecv3.enableIRIn();
+	delay(150);
 }
 void IR::resumeAll(){
+	//enableAll();
 	irRecv0.resume();
 	irRecv1.resume();
 	irRecv2.resume();
 	irRecv3.resume();
+	delay(150);
 }
 int IR::getMessage(){
 	fr = le = ba = ri = false;
