@@ -2,11 +2,11 @@
 #include <IRremote.h>
 IR ir;
 int LED = 17;
-int b0 = 2;
-int b1 = 3;
-int b2 = 4;
-int b3 = 6;
-int b4 = 7;
+int b0 = 16;
+int b1 = 10;
+int b2 = 7;
+int b3 = 8;
+int b4 = 4;
 
 void setup()
 {
@@ -27,22 +27,23 @@ void loop() {
   digitalWrite(LED,HIGH);
   delay(100);
   if(s0 == HIGH){
-    ir.sendMessage(0);//has delay at the end
+    ir.sendMessage(0); Serial.print("s0");
+    //has delay at the end 
   }
   else if(s1 == HIGH){
-    ir.sendMessage(1);
+    ir.sendMessage(1); Serial.print("s1");
   }
   else if(s2 == HIGH){
-    ir.sendMessage(2);
+    ir.sendMessage(3); Serial.print("s2");
   }
   else if(s3 == HIGH){
-    ir.sendMessage(3);
+    ir.sendMessage(5); Serial.print("s3");
   }
   else if(s4 == HIGH){
-    ir.sendMessage(4);
+    ir.sendMessage(7); Serial.print("s4");
   }
   else{
-    ir.sendMessage(8);
+    ir.sendMessage(8); 
   }
   digitalWrite(LED,LOW);
   delay(100);

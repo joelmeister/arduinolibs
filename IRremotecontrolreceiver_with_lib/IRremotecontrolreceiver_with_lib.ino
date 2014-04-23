@@ -11,8 +11,8 @@
 #define MOTORENA 20
 #define MSG_FWD 0
 #define MSG_BACK 1
-#define MSG_LEFT 2
-#define MSG_RIGHT 3
+#define MSG_LEFT 3
+#define MSG_RIGHT 5
 
 int LED = 17;
 int LED0= A0;
@@ -28,31 +28,28 @@ void setup(){
 	pinMode(LED0,OUTPUT);//shit code
 	pinMode(LED1,OUTPUT);//shit code
 }
-#define BIG 100
-#define LITTLE 10
+#define BIG 200
+#define LITTLE 20
 void loop(){
-          digitalWrite(LED,HIGH);
+        digitalWrite(LED,HIGH);
 	int res = ir.getMessage(); 
         if(res != -1){
           digitalWrite(LED,LOW);
-          //ir.resumeAll();
-         // delay(50);
         }
-	if(ir.front()){
-		motor.forward();
+	if(res == MSG_FWD){
+	    motor.forward();
             delay(BIG);
 	}else if(res == MSG_BACK){
-		motor.backward();
-              delay(BIG);
+	    motor.backward();
+            delay(BIG);
 	}else if(res == MSG_LEFT){
-		motor.turnLeft();
+	    motor.turnLeft();
             delay(BIG);
 	}else if(res == MSG_RIGHT){
-		motor.turnRight();
+	    motor.turnRight();
             delay(BIG);
 	}else{
-                motor.stop();
+            motor.stop();
+	    delay(LITTLE);
         }
-        
-	delay(LITTLE);
 }

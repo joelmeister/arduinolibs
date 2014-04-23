@@ -85,7 +85,7 @@ void IR::sendMessage(int msg){
 	}
 	
 	this->resumeAll();
-	delay(250);
+	delay(150);
 }
 
 /*
@@ -149,12 +149,13 @@ int IR::getMessage(){
 	return -1;
 }
 int IR::getResult(IRrecv &irrecv){
-    //digitalWrite(LED,LOW);
-    //delay(50);
+    delay(50);
 	
-	if(results.rawlen < 8 || results.rawlen > 12){
-		//Serial.println("bad message size: ");
-		//Serial.println(results.rawlen);
+	if(results.rawlen != 10){
+#ifdef DEBUG
+		Serial.println("bad message size: ");
+		Serial.println(results.rawlen);
+#endif
 		resumeAll();
 		return -1;
 	}
