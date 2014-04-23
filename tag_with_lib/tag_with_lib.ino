@@ -7,8 +7,8 @@
 #include <IR.h>
 #include <NewPing.h>
 
-#define TRIG 8
-#define ECHO 9
+#define TRIG 7
+#define ECHO 8
 #define DIST 400
 #define WHEEL0 6
 #define WHEEL1 9
@@ -22,13 +22,17 @@ IR ir;
 NewPing sonar(TRIG,ECHO,DIST);
 Motor motor(WHEEL0, WHEEL1, MOTORENA);
 
-int IT=0;
+int IT=1;
 
 void setup(){
 	Serial.begin(9600);
 	pinMode(LED,OUTPUT);
 }
 void loop(){
+  tag();
+}
+
+void tag(){
 	if(IT){
 		lookForBot();
 	} else{
@@ -36,7 +40,6 @@ void loop(){
 	}
 	delay(50);
 }
-
 void lookForBot(){
 	int msg = ir.getMessage();
 	if(msg == MSG_ACK){
@@ -48,7 +51,7 @@ void lookForBot(){
 			motor.stop();
 			delay(50);
 		}else if(ir.front()){
-			move();
+			motor.forward();
 		} else if(ir.left()){
 			motor.turnLeft();
 		} else if(ir.right()){
@@ -56,10 +59,10 @@ void lookForBot(){
 		} else if(ir.back()){
 			motor.turnLeft();
 		} else{
-			move();
+			moveIt();
 		}
 	} else{
-		move();
+		moveIt();
 	}
 }
 /*
@@ -84,7 +87,7 @@ void runFromBot(){
 /*
 	move but dont run into anything
 */
-void move(){
+void moveIt(){
 	//if wall turn left
 	motor.turnLeft();
 	//else go forward
