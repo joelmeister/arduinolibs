@@ -16,7 +16,13 @@ class Motor
     void backward(int);
     void turnLeft(int);
     void turnRight(int);
-    void setForwardSpeed(int speed);
+    void forward(int, int);
+    void backward(int, int);
+    void turnLeft(int, int);
+    void turnRight(int, int);
+    void forwardDistance(int time);
+    void turnRightDistance(int time);
+    void turnLeftDistance(int time);
     //void turnLeft90();
   private:
     int wheel0;
