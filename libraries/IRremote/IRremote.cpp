@@ -251,9 +251,9 @@ ISR(TIMER_INTR_NAME)
   //*/
 }
 
-void IRrecv::resume() {
-  irparams.rcvstate = STATE_IDLE;
-  irparams.rawlen = 0;
+void IRrecv::resume() {	
+	irparams.rcvstate = STATE_IDLE;
+	irparams.rawlen = 0;
 }
 
 // Decodes the received IR message

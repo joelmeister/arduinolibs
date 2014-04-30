@@ -6,13 +6,18 @@
 #define RECEIVER 0
 #define SENDER 1
 #define ERROR 2
+#define R0 10
+#define R1 16
+#define R2 14
+#define R3 15
+#define SENDPIN 5
 
 #define DEBUG
 IR::IR()
-	: irSend(),irRecv0(10),irRecv1(16),
-		irRecv2(14),irRecv3(15),
-		send_pin(5), recv_pin0(10), recv_pin1(16),
-		recv_pin2(14), recv_pin3(15)
+	: irSend(),irRecv0(R0),irRecv1(R1),
+		irRecv2(R2),irRecv3(R3),
+		send_pin(SENDPIN), recv_pin0(R0), recv_pin1(R1),
+		recv_pin2(R2), recv_pin3(R3)
 {
 	setup();
 /*these might change*/
@@ -108,30 +113,22 @@ int IR::getMessage(){
 	if (irRecv0.decode(&results)) {
 		fr = true;
 		int res = getResult(irRecv0);
-		digitalWrite(A0, 0);//shitty
-		digitalWrite(A1, 0);//shitty
 		return parseResult(res, FRONT);
 	}
 	
 	else if (irRecv2.decode(&results)) {
 		le = true;
 		int res = getResult(irRecv2);
-		digitalWrite(A0, 1);//shitty
-		digitalWrite(A1, 0);
 		return parseResult(res, LEFT);
 	}
 	else if (irRecv3.decode(&results)) {
 		ri = true;
 	    int res = getResult(irRecv3);
-		digitalWrite(A0, 1);//shitty
-		digitalWrite(A1, 1);
 	    return parseResult(res, RIGHT);
 	}
 	else if (irRecv1.decode(&results)) {
 		ba = true;
 		int res = getResult(irRecv1);
-		digitalWrite(A0, 0);//shitty
-		digitalWrite(A1, 1);//shitty
 		return parseResult(res, BACK);
 	}
 	else{
@@ -162,7 +159,7 @@ int IR::getResult(IRrecv &irrecv){
 		Serial.println("bad message size: ");
 		Serial.println(results.rawlen);
 #endif
-		return -1;
+		//return -1;
 	}
     return sum-results.rawbuf[0]-results.rawbuf[results.rawlen-1]; 
 }
@@ -198,6 +195,11 @@ int IR::parseResult(int res, int dir){
 	if(m8_l < res && res <= m8_u){
 		return 8;
 	}
+
+	if(res > 750 && res < 770) return 0; //1337 h4x
+	if(res > 560 && res < 580) return 1; //and 2 lol
+	if(res > 370 && res < 390) return 3; 
+
 	return -1;
 }
 void IR::setMode(int m){

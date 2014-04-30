@@ -22,20 +22,16 @@
 #define MAXDIST 8
 #define TURNSPEED 40
 int LED = 17;
-int LED0= A0;
-int LED1= A1;
 IR ir;
 Motor motor(WHEEL0, WHEEL1, MOTORENA);
 NewPing sonar(7, 8, 200);
 
 
 int IT=0;
-int motorSpeed = FAST; //175 slow, 255 fast 
+int motorSpeed = FAST; //75 slow, 125 fast (127 max) 
 void setup(){
 	Serial.begin(9600);
 	pinMode(LED,OUTPUT);
-	pinMode(LED0,OUTPUT);//shit code
-	pinMode(LED1,OUTPUT);//shit code
 }
 #define BIG 200
 #define LITTLE 20
