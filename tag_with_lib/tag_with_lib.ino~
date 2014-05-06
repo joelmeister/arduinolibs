@@ -9,13 +9,13 @@
 
 #define TRIG 7
 #define ECHO 8
-#define DIST 200
+#define DIST 400
 #define WHEEL0 6
 #define WHEEL1 9
 #define MOTORENA 20
 #define MSG_NOT_IT 0
 #define MSG_TAG 1
-#define MSG_ACK 3
+#define MSG_ACK 2
 
 #define SLOW 75
 #define FAST 125
@@ -27,29 +27,27 @@ IR ir;
 NewPing sonar(TRIG,ECHO,DIST);
 Motor motor(WHEEL0, WHEEL1, MOTORENA);
 
-int IT=0;
+int IT=1;
 int motorspeed  = SLOW;
 void setup(){
 	Serial.begin(9600);
 	pinMode(LED,OUTPUT);
 }
 void loop(){
-	tag();
+  tag();
 }
 
 void tag(){
 	if(IT){
-		motorspeed=FAST;
-		digitalWrite(LED,HIGH);
+          motorspeed=FAST;
+              digitalWrite(LED,HIGH);
 		lookForBot();
-		Serial.println("IT");
-                //moveIt();
+    Serial.println("IT");
 	} else{
-		motorspeed=SLOW;
-		digitalWrite(LED,LOW);
+          motorspeed=SLOW;
+              digitalWrite(LED,LOW);
 		runFromBot();
-		Serial.println("NOT IT");
-                //moveIt();
+    Serial.println("NOT IT");
 	}
 	delay(50);
 }
@@ -79,13 +77,13 @@ void lookForBot(){
 	}
 }
 /*
-   broadcast NOT_IT and wait to be tagged
-   while moving, if tagged send ACK
- */
+	broadcast NOT_IT and wait to be tagged
+	while moving, if tagged send ACK
+*/
 void runFromBot(){
 	int msg = ir.getMessage();
 	if(msg == MSG_TAG){
-		motor.stop();
+                motor.stop();
 		IT = 1;
 		//send ack three times
 		for (int i = 0 ; i < 3; i++){
@@ -96,23 +94,15 @@ void runFromBot(){
 		ir.sendMessage(MSG_NOT_IT);
 		moveIt();
 	}
-        delay(50);
 }
 /*
-   move but dont run into anything
- */
+	move but dont run into anything
+*/
 void moveIt(){
 	//if wall turn left
-        TIMER_DISABLE_INTR;
-        unsigned int dist = sonar.ping_in();
-        TIMER_ENABLE_INTR;
-        Serial.print("distance ");
-        Serial.println(dist);
-        ///*
-	if(dist < 10)
-		motor.turnLeft(TURNSPEED);
+        if(sonar.ping_in() < 10)
+	  motor.turnLeft(TURNSPEED);
 	//else go forward
 	else 
-		motor.forward(motorspeed);
-        //*/
+          motor.forward(motorspeed);
 }

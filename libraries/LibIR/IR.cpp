@@ -6,7 +6,7 @@
 #define RECEIVER 0
 #define SENDER 1
 #define ERROR 2
-#define R0 10
+#define R0 10 //front
 #define R1 16
 #define R2 14
 #define R3 15
@@ -46,6 +46,7 @@ void IR::sendMessage(int msg){
 	Serial.print("sending: ");
 	Serial.println(msg);
 #endif
+
 	if(msg == 0){
 		unsigned int msg[8] = {SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,SMALL,SMALL};
 		this->irSend.sendRaw(msg,9,38);
@@ -82,9 +83,9 @@ void IR::sendMessage(int msg){
 		unsigned int msg[8] = {LARGE,LARGE,LARGE,LARGE,LARGE,LARGE,LARGE,LARGE};
 		this->irSend.sendRaw(msg,9,38);
 	}
-	
+
 	this->enableAll();
-	delay(150);
+	delay(50);
 }
 
 /*

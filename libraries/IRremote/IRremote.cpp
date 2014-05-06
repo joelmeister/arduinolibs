@@ -137,7 +137,7 @@ void IRrecv::enableIRIn() {
   // depending on the reset value (255 to 0)
   TIMER_CONFIG_NORMAL();
 
-  //Timer2 Overflow Interrupt Enable
+  //Timer Overflow Interrupt Enable
   TIMER_ENABLE_INTR;
 
   TIMER_RESET;

@@ -42,19 +42,24 @@ void loop(){
           digitalWrite(LED,LOW);
         }
 	if(res == MSG_FWD ){
-            if(sonar.ping_in() > MAXDIST)
+            if(sonar.ping_in() > MAXDIST){
 	      motor.forward(motorSpeed);
-            else
+              Serial.println("forwards");
+            }else{
                motor.stop();
+            }
             //delay(BIG);
 	}else if(res == MSG_BACK){
 	    motor.backward(motorSpeed);
             //delay(BIG);
+            Serial.println("backwards");
 	}else if(res == MSG_LEFT){
 	    motor.turnLeft(TURNSPEED);
+            Serial.println("left");
             //delay(BIG);
 	}else if(res == MSG_RIGHT){
 	    motor.turnRight(TURNSPEED);
+            Serial.println("right");
             //delay(BIG);
 	} else if(res == MSG_SLOW){
             motorSpeed = SLOW;

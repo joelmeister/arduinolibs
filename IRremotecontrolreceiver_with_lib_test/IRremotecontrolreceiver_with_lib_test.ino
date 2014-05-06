@@ -17,7 +17,7 @@
 #define MSG_LEFT 2
 #define MSG_RIGHT 3
 
-int LED = 3;
+int LED = 17;
 int LED0= A0;
 int LED2= A2;
 int LED1= A1;
