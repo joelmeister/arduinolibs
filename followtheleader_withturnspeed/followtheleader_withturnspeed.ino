@@ -26,7 +26,7 @@ int LED0= A0;
 int LED1= A1;
 IR ir;
 Motor motor(WHEEL0, WHEEL1, MOTORENA);
-NewPing sonar(7, 8, 200);
+NewPing sonar(7, 8, 500);
 
 
 int IT=0;
@@ -45,8 +45,10 @@ void loop(){
         if(res != -1){
           digitalWrite(LED,LOW);
         }	
+         int son = sonar.ping_in();
+          Serial.println(son);
         if(res == MSG_FWD ){
-            if(sonar.ping_in() > MAXDIST)
+            if(son > MAXDIST || son == 0)
 	      motor.forward(motorSpeed);
             else
                motor.stop();
@@ -60,33 +62,30 @@ void loop(){
 	}else if(res == MSG_RIGHT){
 	    motor.turnRight(TURNSPEED);
             //delay(BIG);
-	}else if(ir.left()){
-	    motor.turnLeft(TURNSPEED);
-            //delay(BIG);
-	}else if(ir.right()){
-	    motor.turnRight(TURNSPEED);
-            //delay(BIG);
 	}else if(ir.front()){
-            if(sonar.ping_in() > MAXDIST)
+            if(son > MAXDIST || son == 0)
 	      motor.forward(motorSpeed);
             else
                motor.stop();
             //delay(BIG);
 	}else if(ir.left()){
-	    motor.turnLeft(TURNSPEED);
+	    motor.turnRight(TURNSPEED);
             //delay(BIG);
 	}else if(ir.right()){
-	    motor.turnRight(TURNSPEED);
+	    motor.turnLeft(TURNSPEED);
             //delay(BIG);
 	}else if(ir.back()){
-	    motor.turnRight(TURNSPEED);
+	    motor.turnLeft(TURNSPEED);
             //delay(BIG);
 	} else if(res == MSG_SLOW){
             motorSpeed = SLOW;
         }else if (res == MSG_FAST){
             motorSpeed = FAST;
-        } else if (sonar.ping_in() < MAXDIST){
+        } else if (sonar.ping_in() < MAXDIST && son){
             motor.stop();
+        } else{
+            ///umotor.turnRight(TURNSPEED);
         }
+        //motor.forward(motorSpeed);
 	delay(BIG);
 }

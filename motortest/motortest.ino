@@ -43,7 +43,13 @@ void loop(){
         }
         motor.forward();
         Serial.println("forward");
-        delay(5000);
+        delay(2000);
+        motor.turnLeft();
+        delay(2000);
+        motor.turnRight();
+        delay(2000);
+        motor.backward();
+        delay(2000);
         motor.stop();
         Serial.println("stop");
         delay(1000);

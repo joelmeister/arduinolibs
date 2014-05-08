@@ -10,7 +10,7 @@
 int led = 17;
 
 // the setup routine runs once when you press reset:
-void setup() {                
+void setup() { 
   // initialize the digital pin as an output.
   pinMode(led, OUTPUT);     
   pinMode(20, OUTPUT);
