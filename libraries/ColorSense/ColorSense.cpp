@@ -20,22 +20,22 @@ ColorSense::ColorSense(int pin1, int pin2, int pin3, int pin4)
 void ColorSense::NoFilter() { //Select no filter
   digitalWrite(S2,HIGH); 
   digitalWrite(S3,LOW);
-  delay(5);
+  delay(20);
 }
 void ColorSense::RedFilter() { //Select red filter
   digitalWrite(S2,LOW); 
   digitalWrite(S3,LOW);
-  delay(5);
+  delay(20);
 }
 void ColorSense::GreenFilter() { //Select green filter
   digitalWrite(S2,HIGH); 
   digitalWrite(S3,HIGH);
-  delay(5);
+  delay(20);
 }
 void ColorSense::BlueFilter() { //Select blue filter
   digitalWrite(S2,LOW); 
   digitalWrite(S3,HIGH);
-  delay(5);
+  delay(20);
 }
 
 int ColorSense::GetColor() { //0=white, 1=orange, 2=yellow, 3=red, 4=green, 5=blue, 6=object out of range
@@ -48,31 +48,91 @@ int ColorSense::GetColor() { //0=white, 1=orange, 2=yellow, 3=red, 4=green, 5=bl
 	digitalWrite(LED, HIGH);
 
 	ColorSense::NoFilter();
-	FrequencyClear=500.0/pulseIn(OUT,LOW,10000); // Frequency in kHz
+	FrequencyClear=pulseIn(OUT,LOW,80000); // Frequency in kHz
 	ColorSense::RedFilter();
-	FrequencyRed=500.0/pulseIn(OUT,LOW,10000); // Frequency in kHz
+	FrequencyRed=FrequencyClear/pulseIn(OUT,LOW,80000); // Frequency in kHz
 	ColorSense::GreenFilter();
-	FrequencyGreen=500.0/pulseIn(OUT,LOW,10000); // Frequency in kHz
+	FrequencyGreen=FrequencyClear/pulseIn(OUT,LOW,80000); // Frequency in kHz
 	ColorSense::BlueFilter();
-	FrequencyBlue=500.0/pulseIn(OUT,LOW,10000); // Frequency in kHz
+	FrequencyBlue=FrequencyClear/pulseIn(OUT,LOW,80000); // Frequency in kHz
 
 	//digitalWrite(LED, LOW);
 
+
+
 	  //Output frequency blue, green, red percentage represents the ratio of the 
 	  //respective color to the Clear channel absolute value:
-	PercentageRed=int((FrequencyRed/FrequencyClear)*100.0);
-	PercentageGreen=int((FrequencyGreen/FrequencyClear)*100.0);
-	PercentageBlue=int((FrequencyBlue/FrequencyClear)*100.0);
+	/*PercentageRed=int((FrequencyRed/FrequencyClear)*390.0);
+	PercentageGreen=int((FrequencyGreen/FrequencyClear)*500.0);
+	PercentageBlue=int((FrequencyBlue/FrequencyClear)*440.0);*/
+
+
+	PercentageRed=int((FrequencyRed*432.2) - 60.51);
+	PercentageGreen=int((FrequencyGreen*1416.67) - 340);
+	PercentageBlue=int((FrequencyBlue*671.05) - 134.21);
+
+	/*PercentageRed = PercentageRed - Red0;
+	PercentageGreen = PercentageGreen - Green0;
+	PercentageBlue = PercentageBlue - Blue0;*/
+
+
+	if (PercentageRed < 0 ) {
+	    PercentageRed = 0;
+	}
+	else if (PercentageRed > 255) {
+	    PercentageRed = 255;
+	}
+
+	if (PercentageGreen < 0 ) {
+	    PercentageGreen = 0;
+	}
+	else if (PercentageGreen > 255) {
+	    PercentageGreen = 255;
+	}
+
+	if (PercentageBlue < 0 ) {
+	    PercentageBlue = 0;
+	}
+	else if (PercentageBlue > 255) {
+	    PercentageBlue = 255;
+	}
 
 	Serial.print("red ");
-	Serial.println(PercentageRed);
+	Serial.println(FrequencyRed);
 	Serial.print("green ");
-	Serial.println(PercentageGreen);
+	Serial.println(FrequencyGreen);
 	Serial.print("blue ");
-	Serial.println(PercentageBlue);
-	Serial.print("FrequencyClear ");
-	Serial.println(FrequencyClear);
+	Serial.println(FrequencyBlue);
 
+	int ClosestColor;
+
+	if(FrequencyGreen >= .3){
+		ClosestColor = 2;
+	}
+	else if(FrequencyBlue >= .34){
+		ClosestColor = 1;
+	}
+	else if(FrequencyRed >= .52){
+		ClosestColor = 0;
+	}
+	else{
+		ClosestColor = 3;
+	}
+
+	/*if((PercentageRed > PercentageGreen) && (PercentageRed > PercentageBlue)){
+		ClosestColor = 0;
+	}
+	else if((PercentageGreen > PercentageRed) && (PercentageGreen > PercentageBlue)){
+		ClosestColor = 1;
+	}
+	else if((PercentageBlue > PercentageRed) && (PercentageBlue > PercentageGreen)){
+		ClosestColor = 2;
+	}
+	else{
+		ClosestColor = 3;
+	}*/
+
+/*
 	 //Learned blue, green, red percentage values of different colors
 	  int SavedColorRed[] = {56,38,39}; 
 	  int SavedColorGreen[] = {22,31,26};
@@ -98,7 +158,7 @@ int ColorSense::GetColor() { //0=white, 1=orange, 2=yellow, 3=red, 4=green, 5=bl
 	       }
 	       else{
 	        ClosestColor=3;
-	       }*/
+	       }
 	     }
 
 	       if (ColorArrayDiff[0] < 4) {
@@ -114,17 +174,39 @@ int ColorSense::GetColor() { //0=white, 1=orange, 2=yellow, 3=red, 4=green, 5=bl
 	        ClosestColor=3;
 	       }
 	   } 
-
-
-
 	   	 if(ClosestColor==0) color = "red"; // red 
 	     if(ClosestColor==1) color = "green"; // green
 	     if(ClosestColor==2) color = "blue"; // blue
 	     if(ClosestColor==3) color = "neither"; // not rgb
 	     if(ClosestColor==4) color = "nothing in front"; // switch RGB LED off
-
+*/
 
   	Serial.print("\n");
 
   	return ClosestColor;
+} 
+
+void ColorSense::CalibrateRoom() { //0=white, 1=orange, 2=yellow, 3=red, 4=green, 5=blue, 6=object out of range
+
+	float FrequencyClear,FrequencyRed,FrequencyGreen,FrequencyBlue;
+	int PercentageRed,PercentageGreen,PercentageBlue;
+
+	String color;
+
+	digitalWrite(LED, HIGH);
+
+	ColorSense::NoFilter();
+	FrequencyClear=500.0/pulseIn(OUT,LOW,10000); // Frequency in kHz
+	ColorSense::RedFilter();
+	FrequencyRed=500.0/pulseIn(OUT,LOW,10000); // Frequency in kHz
+	ColorSense::GreenFilter();
+	FrequencyGreen=500.0/pulseIn(OUT,LOW,10000); // Frequency in kHz
+	ColorSense::BlueFilter();
+	FrequencyBlue=500.0/pulseIn(OUT,LOW,10000); // Frequency in kHz
+
+	Red0=int((FrequencyRed/FrequencyClear)*100.0);
+	Green0=int((FrequencyGreen/FrequencyClear)*100.0);
+	Blue0=int((FrequencyBlue/FrequencyClear)*100.0);
+
+
 } 
