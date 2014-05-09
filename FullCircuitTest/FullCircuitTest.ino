@@ -44,6 +44,7 @@ void setup() {
 unsigned int buf[10] = {1000,500,1000,500,1000,500,1000,500};
 
 void loop() {
+<<<<<<< HEAD
   //Color Sensor
   /*int color = sensor.GetColor();
   Serial.println(color);
@@ -199,6 +200,9 @@ void maze(){
           count = 0;
           //maze(count);
         }
+=======
+  RedGreenLight();
+>>>>>>> FETCH_HEAD
 }
 
 void RedGreenLight(){
@@ -215,12 +219,10 @@ void RedGreenLight(){
   else if(color == 1){
     motorTest.turnRight(TURNSPEED);
   }
-  /*else if(sonar.ping_in() < 5){
-    motorTest.turnRightDistance(TURN_90_DIST);
-  }*/
   Serial.print(color);
 }
 
+<<<<<<< HEAD
 void new_maze(){
         //float val;  
         motorTest.forwardDistance(FORWARD_DIST);
@@ -242,3 +244,5 @@ void new_maze(){
 
 
 
+=======
+>>>>>>> FETCH_HEAD
