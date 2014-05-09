@@ -6,8 +6,8 @@ Motor::Motor(int pin1, int pin2, int pin3)
   pinMode(pin1, OUTPUT);
   pinMode(pin2, OUTPUT);
   pinMode(pin3, OUTPUT);
-  wheel0 = pin1;
-  wheel1 = pin2;
+  wheel0 = pin2;
+  wheel1 = pin1;
   motorENA = pin3;
 }
 

@@ -47,45 +47,21 @@ void loop(){
         }	
          int son = sonar.ping_in();
           Serial.println(son);
-        if(res == MSG_FWD ){
+        if(ir.front()){
             if(son > MAXDIST || son == 0)
 	      motor.forward(motorSpeed);
             else
                motor.stop();
-            //delay(BIG);
-	}else if(res == MSG_BACK){
-	    motor.backward(motorSpeed);
-            //delay(BIG);
-	}else if(res == MSG_LEFT){
-	    motor.turnLeft(TURNSPEED);
-            //delay(BIG);
-	}else if(res == MSG_RIGHT){
-	    motor.turnRight(TURNSPEED);
-            //delay(BIG);
-	}else if(ir.front()){
-            if(son > MAXDIST || son == 0)
-	      motor.forward(motorSpeed);
-            else
-               motor.stop();
-            //delay(BIG);
 	}else if(ir.left()){
 	    motor.turnRight(TURNSPEED);
-            //delay(BIG);
 	}else if(ir.right()){
 	    motor.turnLeft(TURNSPEED);
-            //delay(BIG);
 	}else if(ir.back()){
 	    motor.turnLeft(TURNSPEED);
-            //delay(BIG);
-	} else if(res == MSG_SLOW){
-            motorSpeed = SLOW;
-        }else if (res == MSG_FAST){
-            motorSpeed = FAST;
-        } else if (sonar.ping_in() < MAXDIST && son){
+        } else if (son < MAXDIST && son){
             motor.stop();
         } else{
-            ///umotor.turnRight(TURNSPEED);
+            //motor.turnRight(TURNSPEED);
         }
-        //motor.forward(motorSpeed);
 	delay(BIG);
 }

@@ -2,7 +2,7 @@
 #include <IRremote.h>
 IR ir;
 int LED = 17;
-/*
+
 //protoboard
 int b0 = A3;
 int b1 = A0;
@@ -12,7 +12,8 @@ int b4 = 9;
 int b5 = 7;
 int b6 = 4;
 int b7 = 2;
-*/
+
+/*
 //prototype
 int b0 = 10;
 int b1 = 16;
@@ -22,6 +23,7 @@ int b4 = 9;
 int b5 = 8;
 int b6 = 7;
 int b7 = 4;
+*/
 void setup()
 {
   Serial.begin(9600);
@@ -44,11 +46,11 @@ void loop() {
   int s5 = digitalRead(b5);
   int s6 = digitalRead(b6);
   int s7 = digitalRead(b7);
-  /*
+  
   Serial.print(s0);  Serial.print(s1);  Serial.print(s2);
     Serial.print(s3);  Serial.print(s4);  Serial.print(s5);
       Serial.print(s6);  Serial.print(s7);
-   */
+   
   digitalWrite(LED,HIGH);
   delay(20);
   if(s0 == HIGH){

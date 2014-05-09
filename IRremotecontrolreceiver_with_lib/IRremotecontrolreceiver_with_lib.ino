@@ -41,32 +41,21 @@ void loop(){
         if(res != -1){
           digitalWrite(LED,LOW);
         }
+        int waddupson = sonar.ping_in();
 	if(res == MSG_FWD ){
-            if(sonar.ping_in() > MAXDIST){
 	      motor.forward(motorSpeed);
               Serial.println("forwards");
-            }else{
-               motor.stop();
-            }
-            //delay(BIG);
 	}else if(res == MSG_BACK){
 	    motor.backward(motorSpeed);
-            //delay(BIG);
             Serial.println("backwards");
 	}else if(res == MSG_LEFT){
 	    motor.turnLeft(TURNSPEED);
             Serial.println("left");
-            //delay(BIG);
 	}else if(res == MSG_RIGHT){
 	    motor.turnRight(TURNSPEED);
-            Serial.println("right");
-            //delay(BIG);
-	} else if(res == MSG_SLOW){
-            motorSpeed = SLOW;
-        }else if (res == MSG_FAST){
-            motorSpeed = FAST;
-        } else if (res == 8 ||  sonar.ping_in() < MAXDIST){
+            Serial.println("right"); 
+        } else if (res != -1 || (waddupson < MAXDIST && waddupson)){
             motor.stop();
         }
-	delay(BIG);
+	delay(200);
 }
