@@ -20,7 +20,7 @@
 #define SLOW 75
 #define FAST 125
 #define MAXDIST 8
-#define TURNSPEED 40
+#define TURNSPEED 25
 int LED = 17;
 int LED0= A0;
 int LED1= A1;
@@ -53,15 +53,15 @@ void loop(){
             else
                motor.stop();
 	}else if(ir.left()){
-	    motor.turnRight(TURNSPEED);
+	    motor.turnLeft(TURNSPEED);
 	}else if(ir.right()){
-	    motor.turnLeft(TURNSPEED);
+	    motor.turnRight(TURNSPEED);
 	}else if(ir.back()){
-	    motor.turnLeft(TURNSPEED);
+	    motor.turnRight(TURNSPEED);
         } else if (son < MAXDIST && son){
             motor.stop();
         } else{
-            //motor.turnRight(TURNSPEED);
+            //motor.turnLeft(TURNSPEED);
         }
 	delay(BIG);
 }

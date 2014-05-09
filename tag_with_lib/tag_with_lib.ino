@@ -17,17 +17,17 @@
 #define MSG_TAG 1
 #define MSG_ACK 3
 
-#define SLOW 75
-#define FAST 125
+#define SLOW 65
+#define FAST 100
 #define MAXDIST 8
-#define TURNSPEED 40
+#define TURNSPEED 25
 
-int LED = A0;
+int LED = 17;
 IR ir;
 NewPing sonar(TRIG,ECHO,DIST);
 Motor motor(WHEEL0, WHEEL1, MOTORENA);
 
-int IT=0;
+int IT=1;
 int motorspeed  = SLOW;
 void setup(){
 	Serial.begin(9600);
@@ -59,18 +59,22 @@ void lookForBot(){
 		IT = 0;
 		//turn around and move forward
 	}else if (msg == MSG_NOT_IT){
-		if(sonar.ping_cm() < 10 && ir.front()){
+                int sonson = sonar.ping_cm();
+		if(sonson && sonson < 10 && ir.front()){
+                        digitalWrite(LED,HIGH);
 			ir.sendMessage(MSG_TAG);
 			motor.stop();
 			delay(50);
+                        digitalWrite(LED,LOW);
+			delay(50);
 		}else if(ir.front()){
-			motor.forward();
+			motor.forward(motorspeed);
 		} else if(ir.left()){
-			motor.turnLeft();
+			motor.turnLeft(TURNSPEED);
 		} else if(ir.right()){
-			motor.turnRight();
+			motor.turnRight(TURNSPEED);
 		} else if(ir.back()){
-			motor.turnLeft();
+			motor.turnRight(TURNSPEED);
 		} else{
 			moveIt();
 		}
@@ -103,13 +107,11 @@ void runFromBot(){
  */
 void moveIt(){
 	//if wall turn left
-        TIMER_DISABLE_INTR;
         unsigned int dist = sonar.ping_in();
-        TIMER_ENABLE_INTR;
         Serial.print("distance ");
         Serial.println(dist);
         ///*
-	if(dist < 10)
+	if(dist && dist < 10)
 		motor.turnLeft(TURNSPEED);
 	//else go forward
 	else 

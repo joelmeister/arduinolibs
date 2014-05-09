@@ -180,39 +180,39 @@ int IR::parseResult(int res, int dir){
 	Serial.print("Direction: ");
 	Serial.println(dir);
 #endif
-	if(m0_l < res && res <= m0_u){
+	if(m0_l <= res && res <= m0_u){
 		Serial.println("received 0");
 		return 0;
 	}
-	if(m1_l < res && res <= m1_u){
+	if(m1_l <= res && res <= m1_u){
 		Serial.println("received 1");
 		return 1;
 	}
-	if(m2_l < res && res <= m2_u){
+	if(m2_l <= res && res <= m2_u){
 		Serial.println("received 2");
 		return 2;
 	}
-	if(m3_l < res && res <= m3_u){
+	if(m3_l <= res && res <= m3_u){
 		Serial.println("received 3");
 		return 3;
 	}
-	if(m4_l < res && res <= m4_u){
+	if(m4_l <= res && res <= m4_u){
 		Serial.println("received 4");
 		return 4;
 	}
-	if(m5_l < res && res <= m5_u){
+	if(m5_l <= res && res <= m5_u){
 		Serial.println("received 5");
 		return 5;
 	}
-	if(m6_l < res && res <= m6_u){
+	if(m6_l <= res && res <= m6_u){
 		Serial.println("received 6");
 		return 6;
 	}
-	if(m7_l < res && res <= m7_u){
+	if(m7_l <= res && res <= m7_u){
 		Serial.println("received 7");
 		return 7;
 	}
-	if(m8_l < res && res <= m8_u){
+	if(m8_l <= res && res <= m8_u){
 		Serial.println("received 8");
 		return 8;
 	}

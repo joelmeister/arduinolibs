@@ -24,7 +24,7 @@
 int LED = 17;
 IR ir;
 Motor motor(WHEEL0, WHEEL1, MOTORENA);
-NewPing sonar(7, 8, 200);
+NewPing sonar(7, 8, 500);
 
 
 int IT=0;
@@ -35,23 +35,24 @@ void setup(){
 }
 #define BIG 200
 #define LITTLE 20
+int counter = 0;
 void loop(){
         digitalWrite(LED,HIGH);
-	int res = ir.getMessage(); 
-        if(res != -1){
-          digitalWrite(LED,LOW);
+        TIMER_DISABLE_INTR;
+        unsigned int yo = sonar.ping_in();
+        TIMER_ENABLE_INTR;
+        Serial.println(yo);
+        if(yo && yo < 5){
+          motor.turnRight(TURNSPEED); 
+        }else{
+          counter++;
+          if ( counter < 25)
+           motor.forward(SLOW);
+          else if( counter < 30)
+            motor.turnLeft(TURNSPEED);
+          else
+            counter = 0;
         }
-        motor.forward();
-        Serial.println("forward");
-        delay(2000);
-        motor.turnLeft();
-        delay(2000);
-        motor.turnRight();
-        delay(2000);
-        motor.backward();
-        delay(2000);
-        motor.stop();
-        Serial.println("stop");
-        delay(1000);
-        
+        ir.sendMessage(8);
+        delay(100);
 }
