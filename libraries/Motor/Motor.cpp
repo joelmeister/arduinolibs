@@ -1,6 +1,13 @@
 #include "Arduino.h"
 #include "Motor.h"
 
+#define WHEEL0 6
+#define WHEEL1 9
+#define MOTORENA 20
+Motor::Motor()
+{
+	Motor(WHEEL0, WHEEL1, MOTORENA);
+}
 Motor::Motor(int pin1, int pin2, int pin3)
 {
   pinMode(pin1, OUTPUT);

@@ -3,18 +3,16 @@
 #define BACK 1
 #define LEFT 2
 #define RIGHT 3
-#define RECEIVER 0
-#define SENDER 1
-#define ERROR 2
 #define R0 10 //front
 #define R1 16
 #define R2 14
 #define R3 15
 #define SENDPIN 5
 
+#define SMALL 5000 //mark/space in send message
+#define LARGE 10000 //mark/space in send message
+
 #define DEBUG
-#define SMALL 5000
-#define LARGE 10000
 IR::IR()
 	: irSend(),irRecv0(R0),irRecv1(R1),
 		irRecv2(R2),irRecv3(R3),
@@ -218,17 +216,12 @@ int IR::parseResult(int res, int dir){
 	}
 
 	if(res > 750 && res < 770) return 0; //1337 h4x
-	if(res > 560 && res < 580) return 1; //and 2 lol
+	if(res > 560 && res < 580) return 1; //1 and 2 lol
 	if(res > 370 && res < 390) return 3; 
 
 	return -1;
 }
 void IR::setMode(int m){
 	this->mode = m;
-	if(this->mode == RECEIVER){
-		this->enableAll();
-	}
-	else if(this->mode == SENDER){
-	}
 }
 int IR::getMode(){return this->mode;}

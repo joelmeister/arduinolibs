@@ -6,14 +6,24 @@
 // ---------------------------------------------------------------------------
 
 #include "NewPing.h"
-#include <IRremote.h>
-#include <IRremoteInt.h>
-
-
+//this is also defined in IRremoteInt.h
+//so we include #ifndef
+#ifndef TIMER_ENABLE_INTR
+#define TIMER_ENABLE_INTR    (TIMSK3 = _BV(OCIE3A))
+#endif
+#ifndef TIMER_DISABLE_INTR
+#define TIMER_DISABLE_INTR   (TIMSK3 = 0)
+#endif
+#define TRIG 7
+#define ECHO 8
+#define MAXDISTANCE 500
 // ---------------------------------------------------------------------------
 // NewPing constructor
 // ---------------------------------------------------------------------------
 
+NewPing::NewPing() {
+	NewPing(TRIG, ECHO, MAXDISTANCE);
+}
 NewPing::NewPing(uint8_t trigger_pin, uint8_t echo_pin, int max_cm_distance) {
 	_triggerBit = digitalPinToBitMask(trigger_pin); // Get the port register bitmask for the trigger pin.
 	_echoBit = digitalPinToBitMask(echo_pin);       // Get the port register bitmask for the echo pin.
