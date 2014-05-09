@@ -4,8 +4,9 @@
 #include <Motor.h>
 #include <IRremote.h>
 
-#define FORWARD_DIST 1250
-#define TURN_90_DIST 1600
+#define FORWARD_DIST 800
+#define TURN_90_DIST_LEFT 1110
+#define TURN_90_DIST_RIGHT 1110
 //#include <Ultrasonic.h>
 
 
@@ -30,8 +31,8 @@ IRsend irsend;*/
 void setup() {
 	//TCS3200setup();
 	Serial.begin(115200);
-        sensor.CalibrateRoom();
-        maze_done = 0;
+        //sensor.CalibrateRoom();
+        //maze_done = 0;
         
   //pinMode(A0, OUTPUT);
         //irrecv.enableIRIn(); // Start the receiver
@@ -40,16 +41,15 @@ void setup() {
 }
 unsigned int buf[10] = {1000,500,1000,500,1000,500,1000,500};
 
-
 void loop() {
   //Color Sensor
   /*int color = sensor.GetColor();
   Serial.println(color);
-  delay(2000);*/
+  //delay(2000);*/
   
-  /*int num = sonar.ping_in();
-  Serial.println(num);
-  delay(2000);*/
+  //int num = sonar.ping_in();
+ // Serial.println(num);
+  //delay(2000);
   
   /*motorTest.setForwardSpeed(100);
   delay(1000);
@@ -62,9 +62,23 @@ void loop() {
   
   motorTest.setForwardSpeed(0);
   delay(1000);*/
+  //if(sensor.GetColor() != 0){
+   new_maze();
+    //color = sensor.GetColor();
+  //}
+  //else{
+    //motorTest.stop();
+  //}
   
-  new_maze();
-  
+  /*motorTest.turnRightDistance(TURN_90_DIST_RIGHT);
+  motorTest.turnRightDistance(TURN_90_DIST_RIGHT);
+  motorTest.turnRightDistance(TURN_90_DIST_RIGHT);
+  motorTest.turnRightDistance(TURN_90_DIST_RIGHT);
+            motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
+            motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
+            motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
+            motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
+  */
   
   
   //sensor.detectColor(out);
@@ -205,18 +219,23 @@ void RedGreenLight(){
 }
 
 void new_maze(){
-        //int count;  
+        //float val;  
         motorTest.forwardDistance(FORWARD_DIST);
-        motorTest.turnRightDistance(TURN_90_DIST);
-        if(sonar.ping_in() < 2){           
-          motorTest.turnLeftDistance(TURN_90_DIST);
-          if(sonar.ping_in() < 2){           
-            motorTest.turnLeftDistance(TURN_90_DIST);
-            if(sonar.ping_in() < 2){           
-              motorTest.turnLeftDistance(TURN_90_DIST);
+        motorTest.turnRightDistance(TURN_90_DIST_RIGHT);
+        //val = sonar.ping_in();
+        if(sonar.ping_in() < 3){
+          //val = sonar.ping_in();          
+          motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
+          
+          if(sonar.ping_in() < 3){           
+            motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
+            //val = sonar.ping_in();
+            if(sonar.ping_in() < 3){           
+              motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
             }
           }
         }
 }
+
 
 
