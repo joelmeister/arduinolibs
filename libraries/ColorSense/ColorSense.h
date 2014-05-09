@@ -6,6 +6,7 @@
 class ColorSense
 {
   public:
+	ColorSense();
     ColorSense(int pin1, int pin2, int pin3, int pin4);
 	int GetColor();
   void CalibrateRoom();

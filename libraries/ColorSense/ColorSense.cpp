@@ -1,7 +1,15 @@
 #include "Arduino.h"
 #include "ColorSense.h"
 #include <Average.h>
+#define PIND	2
+#define PINE	3
+#define PINF	21
+#define PINOUT	4
 
+ColorSense::ColorSense()
+{
+	ColorSense(PIND,PINE,PINF, PINOUT);
+}
 ColorSense::ColorSense(int pin1, int pin2, int pin3, int pin4)
 {
 	S2 = pin1;
