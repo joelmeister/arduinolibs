@@ -5,8 +5,10 @@
 #include <IRremote.h>
 
 #define FORWARD_DIST 800
-#define TURN_90_DIST_LEFT 1110
-#define TURN_90_DIST_RIGHT 1110
+#define TURN_90_DIST_LEFT 1200
+#define TURN_90_DIST_RIGHT 1060
+#define TURNSPEED 33
+#define FORWARDSPEED 75
 //#include <Ultrasonic.h>
 
 
@@ -45,9 +47,9 @@ void loop() {
   //Color Sensor
   /*int color = sensor.GetColor();
   Serial.println(color);
-  //delay(2000);*/
+  delay(2000);*/
   
-  //int num = sonar.ping_in();
+  //int num = sonar.ping_in();m
  // Serial.println(num);
   //delay(2000);
   
@@ -63,7 +65,7 @@ void loop() {
   motorTest.setForwardSpeed(0);
   delay(1000);*/
   //if(sensor.GetColor() != 0){
-   new_maze();
+   //new_maze();
     //color = sensor.GetColor();
   //}
   //else{
@@ -88,7 +90,8 @@ void loop() {
   
   
   //Red Light Green Light
-  //RedGreenLight();
+  RedGreenLight();
+  //motorTest.forward();
 
   //delay(1000);
   
@@ -201,16 +204,16 @@ void maze(){
 void RedGreenLight(){
   int color;
   color = sensor.GetColor();
-
+  Serial.println(color);
   
   if(color == 0){
     motorTest.stop();
   }
-  else if(color == 1){
-    motorTest.forward();
-  }
   else if(color == 2){
-    motorTest.turnRight();
+    motorTest.forward(FORWARDSPEED);
+  }
+  else if(color == 1){
+    motorTest.turnRight(TURNSPEED);
   }
   /*else if(sonar.ping_in() < 5){
     motorTest.turnRightDistance(TURN_90_DIST);
@@ -223,14 +226,14 @@ void new_maze(){
         motorTest.forwardDistance(FORWARD_DIST);
         motorTest.turnRightDistance(TURN_90_DIST_RIGHT);
         //val = sonar.ping_in();
-        if(sonar.ping_in() < 3){
+        if(sonar.ping_in() < 4){
           //val = sonar.ping_in();          
           motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
           
-          if(sonar.ping_in() < 3){           
+          if(sonar.ping_in() < 4){           
             motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
             //val = sonar.ping_in();
-            if(sonar.ping_in() < 3){           
+            if(sonar.ping_in() < 4){           
               motorTest.turnLeftDistance(TURN_90_DIST_LEFT);
             }
           }

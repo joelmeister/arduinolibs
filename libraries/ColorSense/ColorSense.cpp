@@ -20,22 +20,22 @@ ColorSense::ColorSense(int pin1, int pin2, int pin3, int pin4)
 void ColorSense::NoFilter() { //Select no filter
   digitalWrite(S2,HIGH); 
   digitalWrite(S3,LOW);
-  delay(20);
+  delay(50);
 }
 void ColorSense::RedFilter() { //Select red filter
   digitalWrite(S2,LOW); 
   digitalWrite(S3,LOW);
-  delay(20);
+  delay(50);
 }
 void ColorSense::GreenFilter() { //Select green filter
   digitalWrite(S2,HIGH); 
   digitalWrite(S3,HIGH);
-  delay(20);
+  delay(50);
 }
 void ColorSense::BlueFilter() { //Select blue filter
   digitalWrite(S2,LOW); 
   digitalWrite(S3,HIGH);
-  delay(20);
+  delay(50);
 }
 
 int ColorSense::GetColor() { //0=white, 1=orange, 2=yellow, 3=red, 4=green, 5=blue, 6=object out of range
@@ -50,11 +50,11 @@ int ColorSense::GetColor() { //0=white, 1=orange, 2=yellow, 3=red, 4=green, 5=bl
 	ColorSense::NoFilter();
 	FrequencyClear=pulseIn(OUT,LOW,80000); // Frequency in kHz
 	ColorSense::RedFilter();
-	FrequencyRed=FrequencyClear/pulseIn(OUT,LOW,80000); // Frequency in kHz
+	FrequencyRed=pulseIn(OUT,LOW,80000)/FrequencyClear; // Frequency in kHz
 	ColorSense::GreenFilter();
-	FrequencyGreen=FrequencyClear/pulseIn(OUT,LOW,80000); // Frequency in kHz
+	FrequencyGreen=pulseIn(OUT,LOW,80000)/FrequencyClear; // Frequency in kHz
 	ColorSense::BlueFilter();
-	FrequencyBlue=FrequencyClear/pulseIn(OUT,LOW,80000); // Frequency in kHz
+	FrequencyBlue=pulseIn(OUT,LOW,80000)/FrequencyClear; // Frequency in kHz
 
 	//digitalWrite(LED, LOW);
 
@@ -105,15 +105,14 @@ int ColorSense::GetColor() { //0=white, 1=orange, 2=yellow, 3=red, 4=green, 5=bl
 	Serial.println(FrequencyBlue);
 
 	int ClosestColor;
-
-	if(FrequencyGreen >= .3){
+	if(FrequencyRed < 1.6){
+		ClosestColor = 0;
+	}
+	else if(FrequencyGreen < 3.4){
 		ClosestColor = 2;
 	}
-	else if(FrequencyBlue >= .34){
+	else if(FrequencyBlue < 3.4){
 		ClosestColor = 1;
-	}
-	else if(FrequencyRed >= .52){
-		ClosestColor = 0;
 	}
 	else{
 		ClosestColor = 3;
